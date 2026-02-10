@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat Room</title>
+</head>
+<body>
+  <h2>Chat Room</h2>
+  <textarea id="c" cols="50" rows="15" readonly></textarea><br>
+  <input type="text" id="m" placeholder="Type message..." />
+  <button onclick="send()">Send</button>
+
+  <script>
+    const c = document.getElementById("c");
+    const m = document.getElementById("m");
+    const ws = new WebSocket("ws://localhost:6789");
+    
+    // Prompt for username when page loads
+    const username = prompt("Enter your username:") || "Anonymous";
+
+    ws.onmessage = e => c.value += e.data + "\n";
+
+    function send() {
+      const txt = m.value;
+      if (txt.trim() === "") return;  // Don't send empty messages
+      
+      // Include username in the message
+      ws.send("<" + username + ">: " + txt);
+      c.value += "<You>: " + txt + "\n";
+      m.value = "";
+    }
+  </script>
+</body>
+</html>
